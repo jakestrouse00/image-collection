@@ -4,19 +4,20 @@ import threading
 import os
 
 
-def download(data, number):
+def download(data, number, fileName):
     print(f"Downloading image number: {number}")
     r = requests.get(data['webformatURL'])
-    with open(f'imageSets/realistic/{number}.jpeg', 'wb') as f:
+    with open(f'imageSets/{fileName}/{number}.jpeg', 'wb') as f:
         f.write(r.content)
 
 
-# make_image_classifier --image_dir imageSets --tfhub_module https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4 --image_size 224 --saved_model_dir new_model --labels_output_file class_labels.txt
 
 fileNames = ['human', 'dog', 'cat', 'chicken', 'baby', 'child']
-counter = 1
-os.makedirs(f'imageSets/realistic')
+
+
 for fileName in fileNames:
+    counter = 1
+    os.makedirs(f'imageSets/{fileName}')
     print(f"Using {fileName}")
 
 
@@ -39,5 +40,5 @@ for fileName in fileNames:
             except Exception as e:
                 break
             for image in r.json()['hits']:
-                threading.Thread(target=download, args=(image, counter,)).start()
+                threading.Thread(target=download, args=(image, counter,fileName)).start()
                 counter += 1
